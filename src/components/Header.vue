@@ -1,23 +1,74 @@
 <template>
   <div class="container-fluid mb-2">
-    <!-- Header Section -->
+    <!-- Model Setup Placeholder -->
     <div class="row mx-1">
-      <nav class="navbar navbar-light bg-info">
-        <div class="container-fluid justify-content-between">
-          <div class="d-flex justify-content-start">
-            <button class="btn btn-light me-1">
-              <span class="h5">Proceed</span>
-            </button>
+      <div class="col-12 bg-info p-3 rounded">
+        <h5 class="mb-3">Model Setup</h5>
+        <!-- Model Name -->
+        <div class="mb-2">
+          <label for="modelName">Model Name:</label>
+          <input type="text" id="modelName" v-model="model.name" class="form-control" />
+        </div>
+        <TabulatorModel />
+        <!-- Model Attributes -->
+        <!-- <div v-for="(attribute, index) in model.attributes" :key="index" class="row mb-2">
+          <div class="col-5">
+            <label :for="'attributeName' + index">Attribute Name:</label>
+            <input
+              type="text"
+              :id="'attributeName' + index"
+              v-model="attribute.name"
+              class="form-control"
+            />
           </div>
-          <div class="d-flex justify-content-end">
-            <div class="navbar-text">
-              <button class="btn btn-light">
-                <span class="text-black h5">Hi</span>
-              </button>
-            </div>
+          <div class="col-5">
+            <label :for="'attributeType' + index">Attribute Type:</label>
+            <input
+              type="text"
+              :id="'attributeType' + index"
+              v-model="attribute.type"
+              class="form-control"
+            />
+          </div>
+          <div class="col-2 d-flex align-items-end">
+            <button class="btn btn-danger" @click="removeAttribute(index)">Remove</button>
           </div>
         </div>
-      </nav>
+        <button class="btn btn-secondary" @click="addAttribute">Add Attribute</button> -->
+      </div>
+    </div>
+
+    <!-- Config Group -->
+    <div class="row mx-1 mt-2">
+      <div class="col-12 bg-info p-3 rounded">
+        <h5 class="mb3">Config Group</h5>
+        <div class="row">
+          <div class="col-6 mb-2">
+            <label>Variable Name Context (Gin):</label>
+            <input type="text" v-model="config.ctx" class="form-control" />
+          </div>
+          <div class="col-6 mb-2">
+            <label>Variable Name Transaction (Gorm):</label>
+            <input type="text" v-model="config.tx" class="form-control" />
+          </div>
+          <div class="col-6 mb-2">
+            <label>Variable Name Error (Golang):</label>
+            <input type="text" v-model="config.err" class="form-control" />
+          </div>
+          <div class="col-6 mb-2">
+            <label>Variable Name Request (Parameters):</label>
+            <input type="text" v-model="config.requestVarName" class="form-control" />
+          </div>
+          <div class="col-6 mb-2">
+            <label class="form-check-label">Include Underscore For Naming:</label>
+            <input type="checkbox" v-model="config.setting" class="form-check-input" />
+          </div>
+          <div class="col-6 mb-2">
+            <label class="form-check-label">Hans Framework:</label>
+            <input type="checkbox" v-model="config.utils" class="form-check-input" />
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Checkbox Group 1 -->
@@ -66,14 +117,32 @@
       </div>
     </div>
   </div>
+
+  <button class="btn btn-success me-1" @click="logData('success')">Test Variable Success</button>
 </template>
 
 <script>
+import TabulatorModel from './tools/TabulatorModel.vue'
+
 export default {
+  components: {
+    TabulatorModel
+  },
   data() {
     return {
+      model: {
+        name: '',
+        attributes: []
+      },
+      config: {
+        ctx: '',
+        tx: '',
+        err: '',
+        requestVarName: '',
+        setting: false,
+        utils: false
+      },
       tabs: {
-        Model: true,
         Repository: false,
         Controller: false,
         Service: false,
@@ -97,6 +166,18 @@ export default {
   methods: {
     emitToggle(item, isChecked) {
       this.$emit('toggleItem', item, isChecked)
+    },
+    logData(type) {
+      console.log(`Tabs (${type}):`, this.tabs)
+      console.log(`Operations (${type}):`, this.operations)
+      console.log(`Config (${type}):`, this.config)
+      console.log(`Model (${type}):`, this.model)
+    },
+    addAttribute() {
+      this.model.attributes.push({ name: '', type: '' })
+    },
+    removeAttribute(index) {
+      this.model.attributes.splice(index, 1)
     }
   }
 }
