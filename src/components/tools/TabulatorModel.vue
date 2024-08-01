@@ -2,6 +2,7 @@
   <h5 class="mb-3">Tabulator Model</h5>
   <!-- Add Row Button -->
   <button class="btn btn-secondary mb-2" @click="addRow">Add Row</button>
+  <button class="btn btn-secondary mb-2" @click="clearTable">Remove All Row</button>
   <!-- Tabulator Table -->
   <div id="tabulator-table"></div>
 </template>
@@ -30,12 +31,11 @@ export default {
         name: ''
       })
     },
-    removeRow(row) {
-      // Remove the specified row from the table data
-      const index = this.data.indexOf(row)
-      if (index > 0) {
-        this.data.splice(index, 1)
-      }
+    clearTable() {
+      var tempData = this.table.getRows()
+      tempData.forEach((rowObject) => {
+        rowObject.delete()
+      })
     }
   },
   mounted() {
@@ -56,7 +56,8 @@ export default {
           formatter: () => '<button>Delete</button>',
           align: 'center',
           cellClick: (e, cell) => {
-            this.removeRow(cell.getRow().getData())
+            var row = cell.getRow()
+            row.delete()
           }
         }
       ]
