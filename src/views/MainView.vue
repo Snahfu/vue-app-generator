@@ -1,34 +1,28 @@
 <template>
   <div id="app">
-    <Header @toggleTab="toggleTab" />
-    <Body :activeTabs="activeTabs" />
+    <Header />
+    <!-- <TabManager :tabs="tabs" /> -->
+    <TabManager />
   </div>
 </template>
 
 <script>
 import Header from '@/components/Header.vue' // Use @ as alias for src/components
 import Body from '@/components/Body.vue'
+import TabManager from '@/components/content/TabManager.vue'
+import { useGeneratorGolangStore } from '@/stores/GeneratorGolangStores'
 
 export default {
   name: 'MainView',
   components: {
     Header,
-    Body
+    Body,
+    TabManager
   },
-  data() {
+  setup() {
+    const generatorStore = useGeneratorGolangStore()
     return {
-      activeTabs: ['Model'] // Default tab
-    }
-  },
-  methods: {
-    toggleTab(tab, isChecked) {
-      if (isChecked) {
-        if (!this.activeTabs.includes(tab)) {
-          this.activeTabs.push(tab)
-        }
-      } else {
-        this.activeTabs = this.activeTabs.filter((t) => t !== tab)
-      }
+      tabs: generatorStore.tabs
     }
   }
 }

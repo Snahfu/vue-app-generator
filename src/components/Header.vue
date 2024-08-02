@@ -7,41 +7,10 @@
         <!-- Model Name -->
         <div class="mb-2">
           <label for="modelName">Model Name:</label>
-          <input type="text" id="modelName" v-model="model.name" class="form-control" />
+          <input type="text" id="modelName" v-model="config.name" class="form-control" />
         </div>
         <TabulatorModel />
-        <!-- Model Attributes -->
-        <!-- <div v-for="(attribute, index) in model.attributes" :key="index" class="row mb-2">
-          <div class="col-5">
-            <label :for="'attributeName' + index">Attribute Name:</label>
-            <input
-              type="text"
-              :id="'attributeName' + index"
-              v-model="attribute.name"
-              class="form-control"
-            />
-          </div>
-          <div class="col-5">
-            <label :for="'attributeType' + index">Attribute Type:</label>
-            <input
-              type="text"
-              :id="'attributeType' + index"
-              v-model="attribute.type"
-              class="form-control"
-            />
-          </div>
-          <div class="col-2 d-flex align-items-end">
-            <button class="btn btn-danger" @click="removeAttribute(index)">Remove</button>
-          </div>
-        </div>
-        <button class="btn btn-secondary" @click="addAttribute">Add Attribute</button> -->
-      </div>
-    </div>
-
-    <!-- Config Group -->
-    <div class="row mx-1 mt-2">
-      <div class="col-12 bg-info p-3 rounded">
-        <h5 class="mb3">Config Group</h5>
+        <h5 class="mt-3">Config Group</h5>
         <div class="row">
           <div class="col-6 mb-2">
             <label>Variable Name Context (Gin):</label>
@@ -122,62 +91,43 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import TabulatorModel from './tools/TabulatorModel.vue'
+import { useGeneratorGolangStore } from '@/stores/GeneratorGolangStores'
 
 export default {
   components: {
     TabulatorModel
   },
-  data() {
-    return {
-      model: {
-        name: '',
-        attributes: []
-      },
-      config: {
-        ctx: '',
-        tx: '',
-        err: '',
-        requestVarName: '',
-        setting: false,
-        utils: false
-      },
-      tabs: {
-        Repository: false,
-        Controller: false,
-        Service: false,
-        Router: false,
-        Views: false,
-        Params: false
-      },
-      operations: {
-        GetAll: false,
-        GetByID: false,
-        GetByName: false,
-        Update: false,
-        Create: false,
-        SoftDeleteByID: false,
-        DeleteByID: false,
-        SoftDeleteByName: false,
-        DeleteByName: false
+  setup() {
+    const store = useGeneratorGolangStore()
+
+    const config = computed(() => store.config)
+    const tabs = computed(() => store.tabs)
+    const operations = computed(() => store.operations)
+
+    const logData = (status) => {
+      console.log('Test Data:', {
+        config: config.value,
+        tabs: tabs.value,
+        operations: operations.value
+      })
+    }
+
+    const emitToggle = (key, value) => {
+      if (key in tabs.value) {
+        store.updateTab(key, value)
+      } else if (key in operations.value) {
+        store.updateOperation(key, value)
       }
     }
-  },
-  methods: {
-    emitToggle(item, isChecked) {
-      this.$emit('toggleItem', item, isChecked)
-    },
-    logData(type) {
-      console.log(`Tabs (${type}):`, this.tabs)
-      console.log(`Operations (${type}):`, this.operations)
-      console.log(`Config (${type}):`, this.config)
-      console.log(`Model (${type}):`, this.model)
-    },
-    addAttribute() {
-      this.model.attributes.push({ name: '', type: '' })
-    },
-    removeAttribute(index) {
-      this.model.attributes.splice(index, 1)
+
+    return {
+      config,
+      tabs,
+      operations,
+      logData,
+      emitToggle
     }
   }
 }
