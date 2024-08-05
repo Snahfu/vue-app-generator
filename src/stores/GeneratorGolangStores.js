@@ -12,14 +12,65 @@ export const useGeneratorGolangStore = defineStore('generateGolang', {
       setting: false,
       utils: false
     },
-    tabs: {
-      Repository: false,
-      Controller: false,
-      Service: false,
-      Router: false,
-      Views: false,
-      Params: false
-    },
+    tabs: [
+      {
+        name: 'Repository',
+        isActive: false,
+        isShown: false,
+        desc: 'Hi',
+        position: null
+      },
+      {
+        name: 'Service',
+        isActive: false,
+        isShown: false,
+        desc: 'Hi',
+        position: null
+      },
+      {
+        name: 'Controller',
+        isActive: false,
+        isShown: false,
+        desc: 'Hi',
+        position: null
+      },
+      {
+        name: 'Router',
+        isActive: false,
+        isShown: false,
+        desc: 'Hi',
+        position: null
+      },
+      {
+        name: 'Views',
+        isActive: false,
+        isShown: false,
+        desc: 'Hi',
+        position: null
+      },
+      {
+        name: 'Params',
+        isActive: false,
+        isShown: false,
+        desc: 'Hi',
+        position: null
+      },
+      {
+        name: 'Models',
+        isActive: false,
+        isShown: false,
+        desc: 'Hi',
+        position: null
+      },
+      {
+        name: 'Vue Front End',
+        isActive: false,
+        isShown: false,
+        desc: 'Hi',
+        position: null
+      }
+    ],
+    nextShowOrder: 1,
     operations: {
       GetAll: false,
       GetByID: false,
@@ -33,14 +84,65 @@ export const useGeneratorGolangStore = defineStore('generateGolang', {
     }
   }),
   actions: {
+    toggleTabIsShown(index) {
+      if (index >= 0 && index < this.tabs.length) {
+        var currentTab = this.tabs[index]
+        if (currentTab.isShown) {
+          currentTab.isShown = false
+          if (currentTab.isActive) {
+            var tempTab = this.tabs
+              .filter((tab) => tab.isShown === true)
+              .sort((a, b) => a.position - b.position)
+            if (tempTab.length > 0) {
+              this.toggleTabIsActive(tempTab[0].name)
+            } else {
+              this.toggleTabIsActive(null)
+            }
+          }
+          currentTab.position = null
+        } else {
+          if (this.tabs.filter((tab) => tab.isShown).length == 0) {
+            this.toggleTabIsActive(currentTab.name)
+          }
+          currentTab.isShown = true
+          currentTab.position = this.nextShowOrder++
+        }
+      } else {
+        console.log('Error Invalid index')
+      }
+    },
+
+    toggleTabIsActive(name) {
+      this.tabs.forEach((tab) => {
+        tab.isActive = tab.name === name
+      })
+    },
+
+    closeTab(name) {
+      var currentTab = this.tabs.find((tab) => tab.name === name)
+      if (currentTab) {
+        currentTab.isShown = false
+        if (currentTab.isActive) {
+          var tempTab = this.tabs
+            .filter((tab) => tab.isShown === true)
+            .sort((a, b) => a.position - b.position)
+          if (tempTab.length > 0) {
+            this.toggleTabIsActive(tempTab[0].name)
+          } else {
+            this.toggleTabIsActive(null)
+          }
+        }
+        currentTab.position = null
+      } else {
+        console.log('Error Invalid name')
+      }
+    },
+
     updateConfig(key, value) {
       this.config[key] = value
     },
     updateOperation(key, value) {
       this.operations[key] = value
-    },
-    updateTab(key, value) {
-      this.tabs[key] = value
     }
   }
 })

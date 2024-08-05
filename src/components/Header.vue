@@ -46,18 +46,17 @@
         <h5 class="mb-3">Tab Selection</h5>
         <div class="d-flex flex-wrap">
           <label
-            v-for="(checked, tab) in tabs"
-            :key="tab"
+            v-for="(tab, index) in tabs"
+            :key="index"
             class="form-check form-check-inline me-2"
           >
             <input
               type="checkbox"
-              :value="tab"
-              v-model="tabs[tab]"
-              @change="emitToggle(tab, tabs[tab])"
+              :checked="tab.isShown"
+              @change="emitToggleTab(index)"
               class="form-check-input"
             />
-            <span class="form-check-label">{{ tab }}</span>
+            <span class="form-check-label">{{ tab.name }}</span>
           </label>
         </div>
       </div>
@@ -77,7 +76,7 @@
               type="checkbox"
               :value="operation"
               v-model="operations[operation]"
-              @change="emitToggle(operation, operations[operation])"
+              @change="emitToggleOperation(operation, operations[operation])"
               class="form-check-input"
             />
             <span class="form-check-label">{{ operation }}</span>
@@ -87,7 +86,7 @@
     </div>
   </div>
 
-  <button class="btn btn-success me-1" @click="logData('success')">Test Variable Success</button>
+  <!-- <button class="btn btn-success me-1" @click="logData('success')">Test Variable Success</button> -->
 </template>
 
 <script>
@@ -114,10 +113,12 @@ export default {
       })
     }
 
-    const emitToggle = (key, value) => {
-      if (key in tabs.value) {
-        store.updateTab(key, value)
-      } else if (key in operations.value) {
+    const emitToggleTab = (index) => {
+      store.toggleTabIsShown(index)
+    }
+
+    const emitToggleOperation = (key, value) => {
+      if (key in operations.value) {
         store.updateOperation(key, value)
       }
     }
@@ -127,7 +128,8 @@ export default {
       tabs,
       operations,
       logData,
-      emitToggle
+      emitToggleOperation,
+      emitToggleTab
     }
   }
 }
